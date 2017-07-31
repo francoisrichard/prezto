@@ -22,6 +22,17 @@ _prompt_paradox_current_bg='NONE'
 _prompt_paradox_segment_separator=''
 _prompt_paradox_start_time=$SECONDS
 
+# Detect whether the current directory is a git repository.
+function is_git_repository {
+  git branch > /dev/null 2>&1
+}
+
+function is_hg_repository {
+  hg branch > /dev/null 2>&1
+}
+
+
+
 function prompt_paradox_start_segment {
   local bg fg
   [[ -n "$1" ]] && bg="%K{$1}" || bg="%k"
@@ -50,7 +61,13 @@ function prompt_paradox_build_prompt {
   prompt_paradox_start_segment blue black '$_prompt_paradox_pwd'
 
   if [[ -n "$git_info" ]]; then
-    prompt_paradox_start_segment green black '${(e)git_info[ref]}${(e)git_info[status]}'
+    if is_git_repository ; then
+      prompt_paradox_start_segment green black '${(e)git_info[ref]}${(e)git_info[status]}'
+    else
+      if is_hg_repository ; then
+        prompt_paradox_start_segment green black '${git_info}'
+      fi
+    fi
   fi
 
   if [[ -n "$python_info" ]]; then
@@ -88,7 +105,12 @@ function prompt_paradox_precmd {
 
   # Get Git repository information.
   if (( $+functions[git-info] )); then
-    git-info
+    if is_git_repository ; then
+      git-info
+    fi
+    if is_hg_repository ; then
+      git_info=$(_dotfiles_scm_info)
+    fi
   fi
 
   # Get Python environment information.
