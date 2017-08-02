@@ -28,7 +28,7 @@ function is_git_repository {
 }
 
 function is_hg_repository {
-  hg branch > /dev/null 2>&1
+  [[ $PWD/ = $HOME/fbsource/* ]]
 }
 
 
