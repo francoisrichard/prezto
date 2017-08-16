@@ -5,7 +5,14 @@
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
-local fb_prompt_file=/opt/facebook/share/scm-prompt
+if [[ `uname -s` == 'Darwin' ]]; then
+  export fb_prompt_file="/opt/facebook/share/scm-prompt"
+fi
+
+if [[ `uname -s` == 'Linux' ]]; then
+  export fb_prompt_file="${LOCAL_ADMIN_SCRIPTS}/scm-prompt"
+fi
+
 if [ -f "$fb_prompt_file" ]; then
   source "$fb_prompt_file"
 else
